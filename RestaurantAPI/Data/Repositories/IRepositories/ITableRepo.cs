@@ -8,8 +8,7 @@ namespace RestaurantAPI.Data.Repositories.IRepositories
         Task<List<Table>> GetAllTablesAsync();
         Task<Table> GetTableByIdAsync(int tableId);
         Task<Table> GetTableByTableNumberAsync(int tableNumber);
-
-        /*Task<Table> GetAvailableTablesAsync(int numOfGuest, DateTime requiredStartTime,DateTime requiredEndTime);*/// check available table for given time range
+        Task<List<Table>> GetAvailableTablesByCapacityAsync(DateTime date, TimeSpan startTime, TimeSpan duration, int numOfGuest);
         Task<int> AddTableAsync(Table table);
         Task<bool> UpdateTableAsync(Table table);
         Task<bool> DeleteTableAsync(int tableId);

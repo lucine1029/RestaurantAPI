@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Options;
 using RestaurantAPI.Constants;
 using RestaurantAPI.Data.Repositories.IRepositories;
-using RestaurantAPI.Models;
 using RestaurantAPI.Models.DTOs.Table;
 using RestaurantAPI.Services.IServices;
 using System;
@@ -13,9 +13,11 @@ namespace RestaurantAPI.Services
     {
         //DI injection of ITableRepo
         private readonly ITableRepo _tableRepo;
-        public TableService(ITableRepo tableRepo)
+        private readonly ResturantConfig _resturantConfiguration;
+        public TableService(ITableRepo tableRepo, IOptions<ResturantConfig> resturantConfiguration)
         {
             _tableRepo = tableRepo;
+            _resturantConfiguration = resturantConfiguration.Value;
         }
 
 

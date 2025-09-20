@@ -31,41 +31,18 @@ namespace RestaurantAPI.Data.Repositories
             }
             return false;
         }
+        public async Task<bool> UpdateTableAsync(Table table)
+        {
+            _context.Table.Update(table);
+            var result = await _context.SaveChangesAsync();
+            return true;
+        }
 
         public async Task<List<Table>> GetAllTablesAsync()
         {
             var tables = await _context.Table.ToListAsync();
             return tables;
         }
-
-        //public async Task<Table> GetAvailableTablesAsync(int numOfGuest, DateTime requiredStartTime, DateTime requiredEndTime)
-        //{
-        //    var availableTable = await _context.Table
-        //        .Where (t => t.Capacity == numOfGuest)
-        //        .Where (t => !t.Bookings.Any(b=> 
-        //        (b.EndTime > requiredStartTime) && (b.StartTime < requiredEndTime)))
-        //        .OrderByDescending(t => t.Capacity).FirstOrDefajltAsync();
-        //    return availableTable;
-        //}
-       
-        //public async Task<Table> GetAvailableTablesAsync(int numOfGuest, DateTime requiredStartTime, DateTime requiredEndTime)
-        //{
-        //    var availableTable = await _context.Table
-
-
-
-
-        //    //var availableTable = await _context.Table
-        //    //    .Where(t => t.Capacity >= numOfGuest)
-        //    //    .Where(t => !_context.Booking
-        //    //        .Where(b => b.BookingDate == DateTime.Today) // Assuming we are checking for today's date
-        //    //        .Where(b => (b.StartDateTime < requiredEndTime) && (b.EndDateTime > requiredStartTime))
-        //    //        .Select(b => b.FK_TableId)
-        //    //        .Contains(t.Id))
-        //    //    .FirstOrDefaultAsync();
-        //    //return availableTable;
-
-        //}
 
         public async Task<Table> GetTableByIdAsync(int tableId)
         {
@@ -79,11 +56,32 @@ namespace RestaurantAPI.Data.Repositories
             return table;
         }
 
-        public async Task<bool> UpdateTableAsync(Table table)
+        public async Task<List<Table>> GetAvailableTablesByCapacityAsync(DateTime date, TimeSpan startTime, TimeSpan duration, int numOfGuest)
         {
-            _context.Table.Update(table);
-            var result = await _context.SaveChangesAsync();
-            return true;
+            //var requestedStart = date.Date.Add(startTime);
+            //var requestedEnd = requestedStart.Add(duration);
+
+            //return await _context.Tables
+            //    .Where(t => t.Capacity >= partySize)
+            //    .OrderBy(t => t.Capacity) // Prefer smallest suitable table
+            //    .FirstOrDefaultAsync(t =>
+            //        !_context.Bookings.Any(b =>
+            //            b.TableId == t.Id &&
+            //            b.Status == "Confirmed" && // Or use your BookingStatus enum
+            //            b.BookingDate.Date == date.Date &&
+
+            //            // Check if requested time overlaps with 4-hour blocking window
+            //            requestedStart < b.StartTime.AddHours(2) &&      // Before blocking ends
+            //            requestedEnd > b.StartTime.AddHours(-2)          // After blocking starts
+            //        )
+        
+
+
+
+                    var availableTables = await _context.Table
+                .Where (u => u.Capacity >= numOfGuest)
+                .ToListAsync();
+            return availableTables;
         }
     }
 }

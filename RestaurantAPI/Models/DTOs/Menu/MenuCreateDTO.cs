@@ -1,19 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace RestaurantAPI.Models
+﻿namespace RestaurantAPI.Models.DTOs.Menu
 {
-    public class Menu
+    public class MenuCreateDTO
     {
-        [Key]
-        public int Id { get; set; }
-        [Required]
         public string? DishName { get; set; }
-        [Required]
-        public string Description { get; set; }
-        [Required]
+        public string? Description { get; set; }
         public int Price { get; set; }
         public string? ImageUrl { get; set; }
-        [Required]
         public bool IsAvailable { get; set; }
         public bool IsVegan { get; set; }
         public bool HasNuts { get; set; }
