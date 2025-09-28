@@ -15,19 +15,6 @@ namespace RestaurantAPI.Data.Repositories
         }
 
 
-
-        public async Task<int> CreateBookingAsync(Booking booking)
-        {
-            await _context.Booking.AddAsync(booking);
-            await _context.SaveChangesAsync();
-            return booking.Id;
-        }
-
-        public async Task<bool> DeleteBookingAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<List<Booking>> GetAllBookingsAsync()
         {
             var bookings = await _context.Booking.ToListAsync();
@@ -40,25 +27,56 @@ namespace RestaurantAPI.Data.Repositories
             return booking;
         }
 
-        //public async Task<List<Booking>> GetBookingsByCustomerPhoneAsync(string phone)
-        //{
-        //    var booking = await _context.Booking.FirstOrDefaultAsync(b => b.);
-        //    return booking;
-        //}
-
-        public async Task<List<Booking>> GetBookingsByDateAsync(DateTime date)
+        public async Task<Booking> CreateBookingAsync(Booking booking)
         {
-            throw new NotImplementedException();
+            await _context.Booking.AddAsync(booking);
+            await _context.SaveChangesAsync();
+            return booking;
         }
 
-        public async Task<bool> HasOverLappingBookingAsync(int tableId, DateTime startTime, TimeSpan duration)
+        public async Task<bool> DeleteBookingAsync(int bookingId)
         {
-            throw new NotImplementedException();
+            var rowsAffected = await _context.Booking
+                .Where(t => t.Id == bookingId)
+                .ExecuteDeleteAsync();
+            if (rowsAffected > 0)
+            {
+                return true;
+            }
+            return false;
         }
+
 
         public async Task<bool> UpdateBookingAsync(Booking booking)
         {
-            throw new NotImplementedException();
+            _context.Booking.Update(booking);
+            var result = await _context.SaveChangesAsync();
+            return true;
         }
+
+
+        //public async Task<List<Booking>> GetBookingsByCustomerPhoneAsync(string phone)
+        //{
+        //    var bookings = await _context.Booking
+        //        .Include(b => b.Customer)
+        //        .Where(b => b.Customer.Phone == phone)
+        //        .ToListAsync();
+        //    return bookings;
+        //}
+
+        //public async Task<List<Booking>> GetBookingsByDateAsync(DateTime date)
+        //{
+        //    var bookings = await _context.Booking
+        //        .Where(b => b.BookingDate.Date == date.Date)
+        //        .ToListAsync();
+        //    return bookings;
+        //}
+
+        //public async Task<bool> HasOverLappingBookingAsync(int tableId, DateTime startTime, TimeSpan duration)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+
     }
 }

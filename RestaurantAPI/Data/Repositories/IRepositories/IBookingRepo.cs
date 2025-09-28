@@ -7,11 +7,11 @@ namespace RestaurantAPI.Data.Repositories.IRepositories
     {
         Task<List<Booking>> GetAllBookingsAsync();
         Task<Booking> GetBookingByIdAsync(int id);
-        Task<List<Booking>> GetBookingsByDateAsync(DateTime date);
+        //Task<List<Booking>> GetBookingsByDateAsync(DateTime date);
         //Task<List<Booking>> GetBookingsByCustomerPhoneAsync(string phone);
-        Task<int> CreateBookingAsync(Booking booking);
+        Task<Booking> CreateBookingAsync(Booking booking);
         Task<bool> DeleteBookingAsync(int id);
         Task<bool> UpdateBookingAsync(Booking booking);
-        Task<bool> HasOverLappingBookingAsync(int tableId, DateTime startTime, TimeSpan duration);
+        //Task<bool> HasOverLappingBookingAsync(int tableId, DateTime startTime, TimeSpan duration);
     }
 }

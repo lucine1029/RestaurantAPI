@@ -50,16 +50,6 @@ namespace RestaurantAPI.Controllers
             return Ok(tableByTableNumber);  
         }
 
-        //[HttpGet]
-        //[Route("/getavailabletables")]
-
-        //public async Task<ActionResult<TableDTO>> GetAvailableTables(int numOfGuest, TimeSpan requiredStartTime, TimeSpan requiredEndTime)
-        //{
-        //    var availableTables = await _tableService.GetAvailableTablesAsync(numOfGuest, requiredStartTime, requiredEndTime);
-        //    return Ok(availableTables);
-            
-        //}
-
 
         [HttpPost]
         [Route("/createtable")]

@@ -1,4 +1,5 @@
 ﻿using RestaurantAPI.Models.DTOs.Booking;
+using RestaurantAPI.Models.DTOs.Table;
 
 namespace RestaurantAPI.Services.IServices
 {
@@ -6,15 +7,17 @@ namespace RestaurantAPI.Services.IServices
     {
         //for customer-related
         Task<List<AvailableTimeSlotsDTO>> GetAvailableTimeSlotsAsync(DateTime date, int numberOfGuests);
-        Task<BookingMessageDTO> CreateBookingAsync(BookingCreateDTO bookingCreateDTO);
+        Task<BookingCreateMessageDTO> CreateBookingAsync(BookingCreateDTO bookingCreateDTO);
 
 
         //for admin-only
+        Task<List<BookingDTO>> GetAllBookingsAsync();
         Task<BookingDTO> GetBookingByIdAsync (int id);
-        Task<BookingDTO> GetBookingByCustomerPhoneAsync(string phone);
-        Task<List<BookingDTO>> GetBookingsByDateAsync(DateTime date);
-        Task<BookingMessageDTO> UpdateBookingAsync(int id, BookingUpdateDTO bookingUpdateDTO);
-        Task<BookingMessageDTO> DeleteBookingAsync(int id);
+        Task<List<TableDTO>> GetAvailableTablesAsync(BookingCheckDTO bookingCheckDTO);
+        //Task<List<BookingDTO>> GetBookingsByCustomerPhoneAsync(string phone);
+        //Task<List<BookingDTO>> GetBookingsByDateAsync(DateTime date);
+        Task<BookingCheckDTO> UpdateBookingAsync(int id, BookingUpdateDTO bookingUpdateDTO);
+        Task<BookingCheckDTO> DeleteBookingAsync(int id);
 
     }
 }

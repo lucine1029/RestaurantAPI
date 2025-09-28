@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RestaurantAPI.Data;
 
@@ -11,9 +12,11 @@ using RestaurantAPI.Data;
 namespace RestaurantAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250921090808_adjust-bookingstatus")]
+    partial class adjustbookingstatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -69,10 +72,9 @@ namespace RestaurantAPI.Migrations
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("status")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -184,21 +186,21 @@ namespace RestaurantAPI.Migrations
 
             modelBuilder.Entity("RestaurantAPI.Models.Booking", b =>
                 {
-                    b.HasOne("RestaurantAPI.Models.Customer", "Customer")
+                    b.HasOne("RestaurantAPI.Models.Customer", "Customers")
                         .WithMany("Bookings")
                         .HasForeignKey("FK_CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RestaurantAPI.Models.Table", "Table")
+                    b.HasOne("RestaurantAPI.Models.Table", "Tables")
                         .WithMany("Bookings")
                         .HasForeignKey("FK_TableId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.Navigation("Customers");
 
-                    b.Navigation("Table");
+                    b.Navigation("Tables");
                 });
 
             modelBuilder.Entity("RestaurantAPI.Models.Customer", b =>

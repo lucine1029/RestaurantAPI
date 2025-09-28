@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using RestaurantAPI.Constants;
 using RestaurantAPI.Data.Repositories.IRepositories;
+using RestaurantAPI.Models.DTOs.Booking;
 using RestaurantAPI.Models.DTOs.Table;
 using RestaurantAPI.Services.IServices;
 using System;
@@ -70,7 +71,7 @@ namespace RestaurantAPI.Services
             return tableDto;
         }
 
-        //public async Task<TableDTO> GetAvailableTablesAsync(int numOfGuest, DateTime requiredStartTime, TimeSpan duration)
+        //public async Task<List<TableDTO>> GetAvailableTablesAsync(int numOfGuest, DateTime requiredStartTime, TimeSpan duration)
         //{
         //    var requiredEndTime = requiredStartTime.Add();
         //    var availableTables = await _tableRepo.GetAvailableTablesAsync(numOfGuest, requiredStartTime, requiredEndTime);
@@ -114,13 +115,13 @@ namespace RestaurantAPI.Services
             //3. Call the repository method to add the table
             var newTableId = await _tableRepo.AddTableAsync(newTable);
             //4. Map the saved Entity back to a TableDTO to return ??
-            var newTableDTO = new TableMessageDTO
+            var tableMessageDTO = new TableMessageDTO
             {
                 Id = newTable.Id,
                 TableNumber = newTable.TableNumber,
                 Capacity = newTable.Capacity
             };
-            return newTableDTO;
+            return tableMessageDTO;
         }
 
         public async Task<TableMessageDTO> DeleteTableAsync(int tableId)

@@ -1,4 +1,5 @@
-﻿using RestaurantAPI.Models.DTOs.Table;
+﻿using RestaurantAPI.Models.DTOs.Booking;
+using RestaurantAPI.Models.DTOs.Table;
 
 namespace RestaurantAPI.Services.IServices
 {
