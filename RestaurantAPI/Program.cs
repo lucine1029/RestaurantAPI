@@ -61,6 +61,8 @@ namespace RestaurantAPI
             builder.Services.AddScoped<IBookingRepo, BookingRepo>();
             builder.Services.AddScoped<IBookingService, BookingService>();
 
+            builder.Services.AddScoped<IJWTService, JWTService>();
+
             builder.Services.AddAuthorization();
 
             builder.Services.AddControllers();

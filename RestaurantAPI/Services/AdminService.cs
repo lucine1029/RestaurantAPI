@@ -16,6 +16,25 @@ namespace RestaurantAPI.Services
             _adminRepo = adminRepo;
         }
 
+        public async Task<AdminDTO> AuthenticateAsync(string username, string password)
+        {
+            //1. Check if the admin exists
+            var admin = await _adminRepo.GetAdminByUsernameAsync(username);
+            //2. Verify password
+            if (admin == null || !BCrypt.Net.BCrypt.Verify(password, admin.PasswordHash))
+            {
+                //invalid username or password
+                return null;
+            }
+            //3. Map to DTO 
+            return new AdminDTO
+            {
+                Id = admin.Id,
+                Username = admin.Username,
+                Role = admin.Role
+            };
+
+        }
 
         public async Task<AdminMessageDTO> CreateAdminAsync(AdminCreateDTO adminCreateDTO)
         {

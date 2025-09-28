@@ -6,6 +6,7 @@ namespace RestaurantAPI.Services.IServices
 {
     public interface IAdminService
     {
+        Task<AdminDTO> AuthenticateAsync(string username, string password);
         Task<List<AdminDTO>> GetAllAdminsAsync();
         Task<AdminDTO> GetAdminByUsernameAsync(string username);
         Task<AdminMessageDTO> CreateAdminAsync(AdminCreateDTO adminCreateDTO);

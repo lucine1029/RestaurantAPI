@@ -1,9 +1,12 @@
-﻿namespace RestaurantAPI.Services.IServices
+﻿using RestaurantAPI.Models;
+using System.Security.Claims;
+
+namespace RestaurantAPI.Services.IServices
 {
     public interface IJWTService
     {
-        string GenerateToken(string username, string role);
-        string ValidateToken(string token);
+        string GenerateToken(Admin admin);
+        ClaimsPrincipal ValidateToken(string token);
         
     }
 }
