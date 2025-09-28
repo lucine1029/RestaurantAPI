@@ -9,6 +9,8 @@ namespace RestaurantAPI.Models
         [Required]
         public string Username { get; set; }
         [Required]
-        public string PasswordHash { get; set; }
+        public string PasswordHash { get; set; } //for security reasons only input, never output
+        [Required]
+        public string Role { get; set; } = "Staff";
     }
 }

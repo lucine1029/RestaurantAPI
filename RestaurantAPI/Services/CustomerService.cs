@@ -95,7 +95,7 @@ namespace RestaurantAPI.Services
             };
             //3. Call the repository method to add the customer
             var newCustomerId = await _customerRepo.AddCustomerAsync(newCustomer);
-            //4. Map the saved Entity back to a TableDTO 
+            //4. Map the saved Entity back to a CustomerDTO 
             return new CustomerMessageDTO
             {
                 Id = newCustomer.Id,
