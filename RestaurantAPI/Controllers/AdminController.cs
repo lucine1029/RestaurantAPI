@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantAPI.Constants;
 using RestaurantAPI.Exceptions;
@@ -11,8 +13,11 @@ namespace RestaurantAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+    [Authorize(Policy = "RequireSuperAdmin")]
     public class AdminController : ControllerBase
     {
+
         //AdminController is only for handling admin-related CRUD operations
         private readonly IAdminService _adminService;
         public AdminController(IAdminService adminService)

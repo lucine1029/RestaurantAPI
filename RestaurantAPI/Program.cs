@@ -6,6 +6,7 @@ using RestaurantAPI.Constants;
 using RestaurantAPI.Data;
 using RestaurantAPI.Data.Repositories;
 using RestaurantAPI.Data.Repositories.IRepositories;
+using RestaurantAPI.Models.DTOs.Admin;
 using RestaurantAPI.Services;
 using RestaurantAPI.Services.IServices;
 
@@ -24,13 +25,13 @@ namespace RestaurantAPI
             });
 
             builder.Services.Configure<ResturantConfig>(builder.Configuration.GetSection("RestaurantConfiguration"));
-            
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options => 
+            }).AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
@@ -39,11 +40,23 @@ namespace RestaurantAPI
                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
                     ValidAudience = builder.Configuration["Jwt:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true
                 };
+            });
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireSuperAdmin", policy =>
+                policy.RequireRole(AdminRoles.SuperAdmin));
+
+                options.AddPolicy("RequireManagerOrAbove", policy =>
+                policy.RequireRole(AdminRoles.Manager, AdminRoles.SuperAdmin));
+
+                options.AddPolicy("RequireStaffOrAbove", policy =>
+                policy.RequireRole(AdminRoles.Staff, AdminRoles.Manager, AdminRoles.SuperAdmin));
             });
 
             builder.Services.AddScoped<ITableRepo, TableRepo>();
@@ -68,25 +81,57 @@ namespace RestaurantAPI
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            //builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title = "Restaurant API",
+                    Version = "v1"
+                });
+                options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
+                    Name = "Authorization",
+                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
+                });
+                options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+                {
+                    {
+                        new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                        {
+                            Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                            {
+                                Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
+            });
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+                // Configure the HTTP request pipeline.
+                if (app.Environment.IsDevelopment())
+                {
+                    app.UseSwagger();
+                    app.UseSwaggerUI();
+                }
 
-            app.UseHttpsRedirection();
+                app.UseHttpsRedirection();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+                app.UseAuthentication();
+                app.UseAuthorization();
 
-            app.MapControllers();
+                app.MapControllers();
 
-            app.Run();
+                app.Run();
+            
         }
     }
-}
+}   

@@ -18,61 +18,59 @@ namespace RestaurantAPI.Services
 
         public string GenerateToken(Admin admin)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
-            var issuer = _configuration["Jwt:Issuer"];
-            var audience = _configuration["Jwt:Audience"];
-
             var claims = new ClaimsIdentity(new[]
             {
                 new Claim(ClaimTypes.Name, admin.Username),
-                new Claim(ClaimTypes.Role, "Admin"),
+                new Claim(ClaimTypes.Role, admin.Role),
                 new Claim("AdminId", admin.Id.ToString())
             });
 
+            var issuer = _configuration["Jwt:Issuer"];
+            var audience = _configuration["Jwt:Audience"];
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = claims,
-                Expires = DateTime.UtcNow.AddHours(1),
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(1),//don't know if needed
                 Issuer = issuer,
                 Audience = audience,
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
-                    SecurityAlgorithms.HmacSha256Signature
-                )
+                SigningCredentials = creds
             };
 
+            var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
 
-        public ClaimsPrincipal ValidateToken(string token)
-        {
-            if (string.IsNullOrEmpty(token))
-                return null;
+        //public ClaimsPrincipal ValidateToken(string token)
+        //{
+        //    if (string.IsNullOrEmpty(token))
+        //        return null;
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+        //    var tokenHandler = new JwtSecurityTokenHandler();
+        //    var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
 
-            try
-            {
-                var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidIssuer = _configuration["Jwt:Issuer"],
-                    ValidAudience = _configuration["Jwt:Audience"],
-                    ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
+        //    try
+        //    {
+        //        var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+        //        {
+        //            ValidateIssuerSigningKey = true,
+        //            IssuerSigningKey = new SymmetricSecurityKey(key),
+        //            ValidateIssuer = true,
+        //            ValidateAudience = true,
+        //            ValidIssuer = _configuration["Jwt:Issuer"],
+        //            ValidAudience = _configuration["Jwt:Audience"],
+        //            ClockSkew = TimeSpan.Zero
+        //        }, out SecurityToken validatedToken);
 
-                return principal;
-            }
-            catch
-            {
-                return null; // invalid token
-            }
-        }
+        //        return principal;
+        //    }
+        //    catch
+        //    {
+        //        return null; // invalid token
+        //    }
+        //}
     }
 }

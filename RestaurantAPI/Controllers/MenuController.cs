@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantAPI.Constants;
 using RestaurantAPI.Models.DTOs.Menu;
@@ -11,6 +12,8 @@ namespace RestaurantAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class MenuController : ControllerBase
     {
         private readonly IMenuService _menuService;
@@ -19,6 +22,7 @@ namespace RestaurantAPI.Controllers
             _menuService = menuService;
         }
 
+        [Authorize(Policy = "RequireStaffOrAbove")]
         [HttpGet]
         [Route("/getalldishes")]
         public async Task<ActionResult<List<MenuDTO>>> GetAllDishes()
@@ -27,6 +31,7 @@ namespace RestaurantAPI.Controllers
             return Ok(dishes);
         }
 
+        [Authorize(Policy = "RequireStaffOrAbove")]
         [HttpGet]
         [Route("/getdishbyid/{id}")]
         public async Task<ActionResult<MenuDTO>> GetDishById(int id)
@@ -41,6 +46,7 @@ namespace RestaurantAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "RequireManagerOrAbove")]
         [HttpPost]
         [Route("/createmenu")]
         public async Task<ActionResult<MenuCreateDTO>> CreateMenu([FromBody] MenuCreateDTO menuCreateDTO)
@@ -65,6 +71,7 @@ namespace RestaurantAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "RequireSuperAdmin")]
         [HttpDelete]
         [Route("/deletemenu/{id}")]
         public async Task<ActionResult> DeleteMenuDish(int id)
@@ -89,6 +96,7 @@ namespace RestaurantAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "RequireManagerOrAbove")]
         [HttpPut]
         [Route("/updatemenu/{id}")]
         public async Task<ActionResult> UpdateMenu(int id, MenuUpdateDTO menuUpdateDTO)

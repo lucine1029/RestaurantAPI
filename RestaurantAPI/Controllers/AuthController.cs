@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantAPI.Data.Repositories.IRepositories;
 using RestaurantAPI.Models.DTOs.Auth;
@@ -10,12 +12,12 @@ namespace RestaurantAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        //AuthController is only for handling authentication-related endpoints like login, register, token refresh, etc.
-        private readonly IAdminRepo _adminRepo;
+        //AuthController is only for handling authentication-related endpoints like login, register, token refresh, etc.It calls for two services
+        private readonly IAdminService _adminService;
         private readonly IJWTService _jwtService;
-        public AuthController(IAdminRepo adminRepo, IJWTService jwtService)
+        public AuthController(IAdminService adminService, IJWTService jwtService)
         {
-            _adminRepo = adminRepo;
+           _adminService = adminService;
             _jwtService = jwtService;
         }
 
@@ -24,13 +26,13 @@ namespace RestaurantAPI.Controllers
         [Route("/login")]
         public async Task<ActionResult> Login([FromQuery] LoginDTO loginDTO)
         {
-            var admin = await _adminRepo.GetAdminByUsernameAsync(loginDTO.Username);
-            if (admin == null || !BCrypt.Net.BCrypt.Verify(loginDTO.Password, admin.PasswordHash))
+            var admin = await _adminService.AuthenticateAsync(loginDTO.Username, loginDTO.Password);
+            if (admin == null) 
             {
                 return Unauthorized(new { message = "Invalid username or password" });
             }
-            var token = _jwtService.GenerateToken(admin);
-            var loginResponse = new LoginResponseDTO
+            var token = _jwtService.GenerateToken(admin);//generate JWT using the full entity
+            var loginResponse = new LoginResponseDTO //return a DTO in the response
             {
 
                 Token = token,
@@ -38,7 +40,7 @@ namespace RestaurantAPI.Controllers
                 Role = admin.Role
 
             };
-            return Ok(loginResponse);
+            return Ok(new { token, loginResponse});
         }
     }
 }

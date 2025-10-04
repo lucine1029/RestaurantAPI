@@ -1,6 +1,7 @@
 ﻿using RestaurantAPI.Data.Repositories;
 using RestaurantAPI.Data.Repositories.IRepositories;
 using RestaurantAPI.Exceptions;
+using RestaurantAPI.Models;
 using RestaurantAPI.Models.DTOs.Admin;
 using RestaurantAPI.Models.DTOs.Customer;
 using RestaurantAPI.Services.IServices;
@@ -16,7 +17,7 @@ namespace RestaurantAPI.Services
             _adminRepo = adminRepo;
         }
 
-        public async Task<AdminDTO> AuthenticateAsync(string username, string password)
+        public async Task<Admin> AuthenticateAsync(string username, string password)
         {
             //1. Check if the admin exists
             var admin = await _adminRepo.GetAdminByUsernameAsync(username);
@@ -26,13 +27,8 @@ namespace RestaurantAPI.Services
                 //invalid username or password
                 return null;
             }
-            //3. Map to DTO 
-            return new AdminDTO
-            {
-                Id = admin.Id,
-                Username = admin.Username,
-                Role = admin.Role
-            };
+            //3. Return entity for generating token not AdminDTO, we will response the front by returning DTO in the controller
+            return admin;
 
         }
 

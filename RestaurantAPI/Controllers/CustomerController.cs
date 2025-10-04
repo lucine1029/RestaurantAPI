@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantAPI.Constants;
 using RestaurantAPI.Exceptions;
@@ -11,6 +13,8 @@ namespace RestaurantAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
@@ -19,6 +23,7 @@ namespace RestaurantAPI.Controllers
             _customerService = customerService;
         }
 
+        [Authorize(Policy = "RequireStaffOrAbove")]
         [HttpGet]
         [Route("/getallcustomers")]
         public async Task<ActionResult<List<CustomerDTO>>> GetAllCustomers()
@@ -27,6 +32,7 @@ namespace RestaurantAPI.Controllers
             return Ok(customers);
         }
 
+        [Authorize(Policy = "RequireStaffOrAbove")]
         [HttpGet]
         [Route("/getcustomerbyid/{id}")]
         public async Task<ActionResult<CustomerDTO>> GetCustomerById(int id)
@@ -39,6 +45,7 @@ namespace RestaurantAPI.Controllers
             return Ok(customer);
         }
 
+        [Authorize(Policy = "RequireStaffOrAbove")]
         [HttpGet]
         [Route("/getcustomerbyphonenumber/{phoneNumber}")]
         public async Task<ActionResult<CustomerDTO>> GetCustomerByPhoneNumber(string phoneNumber)
@@ -51,6 +58,7 @@ namespace RestaurantAPI.Controllers
             return Ok(customerByPhoneNumber);
         }
 
+        [Authorize(Policy = "RequireStaffOrAbove")]
         [HttpPost]
         [Route("/createcustomer")]
         public async Task<ActionResult<CustomerCreateDTO>> CreateCustomer([FromBody] CustomerCreateDTO customerCreateDTO)
@@ -76,6 +84,7 @@ namespace RestaurantAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "RequireSuperAdmin")]
         [HttpDelete]
         [Route("/deletecustomer/{id}")]
         public async Task<ActionResult> DeleteCustomer(int id)
@@ -100,6 +109,7 @@ namespace RestaurantAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "RequireManagerOrAbove")]
         [HttpPut]
         [Route("/updatecustomer/{id}")]
         public async Task<ActionResult> UpdateCustomer(int id, CustomerUpdateDTO customerUpdateDTO)

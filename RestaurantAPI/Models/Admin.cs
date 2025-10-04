@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using RestaurantAPI.Models.DTOs.Admin;
+using System.ComponentModel.DataAnnotations;
 
 namespace RestaurantAPI.Models
 {
@@ -11,6 +12,6 @@ namespace RestaurantAPI.Models
         [Required]
         public string PasswordHash { get; set; } //for security reasons only input, never output
         [Required]
-        public string Role { get; set; } = "Staff";
+        public string Role { get; set; }
     }
 }

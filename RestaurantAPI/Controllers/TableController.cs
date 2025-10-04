@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantAPI.Constants;
 using RestaurantAPI.Models.DTOs.Table;
@@ -10,6 +11,7 @@ namespace RestaurantAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TableController : ControllerBase
     {
         private readonly ITableService _tableService;
@@ -18,6 +20,7 @@ namespace RestaurantAPI.Controllers
             _tableService = tableService;
         }
 
+        [Authorize(Policy = "RequireStaffOrAbove")]
         [HttpGet]
         [Route("/getalltables")]
         public async Task<ActionResult<List<TableDTO>>> GetAllTables()
@@ -26,6 +29,7 @@ namespace RestaurantAPI.Controllers
             return Ok(tables);
         }
 
+        [Authorize(Policy = "RequireStaffOrAbove")]
         [HttpGet]
         [Route("/gettablebyid/{id}")]
         public async Task<ActionResult<TableDTO>> GetTableById(int id)
@@ -38,6 +42,7 @@ namespace RestaurantAPI.Controllers
             return Ok(table);
         }
 
+        [Authorize(Policy = "RequireStaffOrAbove")]
         [HttpGet]
         [Route("/gettablebytablenumber/{tableNumber}")]
         public async Task<ActionResult<TableDTO>> GetTableByTableNumber(int tableNumber)
@@ -50,7 +55,7 @@ namespace RestaurantAPI.Controllers
             return Ok(tableByTableNumber);  
         }
 
-
+        [Authorize(Policy = "RequireManagerOrAbove")]
         [HttpPost]
         [Route("/createtable")]
         public async Task<ActionResult<TableCreateDTO>> CreateTable([FromBody]TableCreateDTO tableCreateDTO)
@@ -77,6 +82,7 @@ namespace RestaurantAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "RequireSuperAdmin")]
         [HttpDelete]
         [Route("/deletetable/{id}")]
         public async Task<ActionResult> DeleteTable(int id)
@@ -101,6 +107,7 @@ namespace RestaurantAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "RequireManagerOrAbove")]
         [HttpPut]
         [Route("/updatetable/{id}")]
         public async Task<ActionResult> UpdateTable(int id, TableUpdateDTO tableUpdateDTO)
